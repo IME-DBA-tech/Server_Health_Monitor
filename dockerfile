@@ -8,7 +8,7 @@ run mkdir -p install && pip install --prefix=/install --no-cache-dir -r requirem
 
 FROM python:3.11-slim
 
-RUN adduser -m myuser
+RUN useradd -m myuser
 
 WORKDIR /home/myuser/app
 
