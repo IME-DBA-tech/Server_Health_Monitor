@@ -1,0 +1,65 @@
+name: ci/cd to docker hub
+
+on:
+  push:
+    branches: ["main"]
+
+jobs:
+  push_and_build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: checkout code
+        uses: actions/checkout@v4
+
+      - name: set up docker buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: extract metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ secrets.DOCKERHUB_USERNAME }}/Server_Health_Monitor
+          tags: |
+           type=raw,value=latest
+           type=sha,format=short
+
+      - name: login to docker
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      
+      - name: build and push
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          platforms: linux/amd64
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+      # --- for aws server---
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          script: |
+            # 1. اذهب لمجلد المشروع
+            cd /home/ubuntu/Server_Health_Monitor
+
+            # 2. سجل دخول لدوكر هاب عشان تسحب الصور الخاصة
+            echo ${{ secrets.DOCKERHUB_TOKEN }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
+
+            # 3. اسحب النسخ الجديدة من الصور (Images)
+            docker-compose pull
+
+            # 4. حدث الحاويات بدون توقف السيرفر بالكامل
+            docker-compose up -d --build
+            
+            # 5. تنظيف الصور القديمة عشان متملاش مساحة السيرفر (مهم جداً للـ Free Tier)
+            docker image prune -f

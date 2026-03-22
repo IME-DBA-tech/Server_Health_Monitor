@@ -1,0 +1,32 @@
+# --- ملفات الخصوصية والسرية (أهم جزء) ---
+.env
+*.pem
+secrets.txt
+
+# --- بايثون (ملفات تقنية مش محتاجينها على جيت هوب) ---
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.venv/
+env/
+build/
+dist/
+*.egg-info/
+
+# --- دوكر (ملفات الداتا واللوجز) ---
+# بنمنع رفع فولدر الداتا عشان مساحته وعشان الخصوصية
+mysql_data/
+postgres_data/
+*.log
+
+# --- أدوات النظام والـ IDE ---
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# --- ملفات مؤقتة ---
+*.swp
+*.bak
+*.tmp

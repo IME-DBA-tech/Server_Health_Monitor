@@ -1,0 +1,5 @@
+server_name,cpu_usage,ram_usage,disk_status,last_check
+web-server-01,45,60,Healthy,2026-03-21
+db-server-primary,12,85,Warning,2026-03-21
+backup-node,5,20,Healthy,2026-03-21
+api-gateway,78,55,Healthy,2026-03-21
