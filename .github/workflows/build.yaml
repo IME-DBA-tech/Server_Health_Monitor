@@ -54,7 +54,9 @@ jobs:
 
             # 2. سجل دخول لدوكر هاب عشان تسحب الصور الخاصة
             echo ${{ secrets.DOCKERHUB_TOKEN }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
-
+            
+            echo "${{ secrets.ENV_FILE_CONTENT }}" > .env
+            
             # 3. اسحب النسخ الجديدة من الصور (Images)
             docker-compose pull
 
