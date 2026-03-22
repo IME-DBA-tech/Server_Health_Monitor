@@ -2,7 +2,7 @@ services:
   flask:
     build: .
     container_name: flask_app
-    network:
+    networks:
       - app_network
     restart: on-failure
     env_file: .env
