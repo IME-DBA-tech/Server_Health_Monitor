@@ -49,22 +49,26 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
           script: |
-            # 1. اذهب لمجلد المشروع
-            cd /home/ubuntu/Server_Health_Monitor
+            # 1. التأكد من وجود المجلد أو إنشاؤه وعمل Clone للكود
+            if [ ! -d "/home/ubuntu/Server_Health_Monitor" ]; then
+              echo "Project folder not found. Cloning for the first time..."
+              git clone https://github.com/IME-DBA-tech/Server_Health_Monitor.git /home/ubuntu/Server_Health_Monitor
+            fi
 
-            # 2. سجل دخول لدوكر هاب عشان تسحب الصور الخاصة
+            # 2. الدخول للمجلد وعمل Pull لآخر تحديث في الملفات (YAML, Nginx configs)
+            cd /home/ubuntu/Server_Health_Monitor
+            git pull origin main
+
+            # 3. تسجيل الدخول وسحب الصور (Images) من Docker Hub
             echo ${{ secrets.DOCKERHUB_TOKEN }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
             
+            # 4. كتابة ملف الـ .env (لأنه مش بيترفع على Git)
             echo "${{ secrets.ENV_FILE_CONTENT }}" > .env
             
-            # 3. اسحب النسخ الجديدة من الصور (Images)
+            # 5. تحديث الحاويات
             docker-compose pull
-
-            # 4. حدث الحاويات بدون توقف السيرفر بالكامل
-
             docker-compose down
-
             docker-compose up -d --build
             
-            # 5. تنظيف الصور القديمة عشان متملاش مساحة السيرفر (مهم جداً للـ Free Tier)
+            # 6. تنظيف المساحة
             docker image prune -f
