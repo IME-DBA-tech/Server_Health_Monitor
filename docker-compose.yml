@@ -5,7 +5,8 @@ services:
     networks:
       - app_network
     restart: on-failure
-    env_file: .env
+    env_file: 
+      - .env
     volumes:
       - ./app/server_metrics.csv:/app/server_metrics.csv
     depends_on:
@@ -14,7 +15,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 100M
+          memory: 150M
           
   db:
     image: mysql:latest

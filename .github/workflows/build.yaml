@@ -61,6 +61,9 @@ jobs:
             docker-compose pull
 
             # 4. حدث الحاويات بدون توقف السيرفر بالكامل
+
+            docker-compose down
+            
             docker-compose up -d --build
             
             # 5. تنظيف الصور القديمة عشان متملاش مساحة السيرفر (مهم جداً للـ Free Tier)
