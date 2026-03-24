@@ -31,7 +31,7 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       
-      - name: build and push
+      - name: build and push 
         uses: docker/build-push-action@v5
         with:
           context: .
@@ -63,7 +63,7 @@ jobs:
             # 4. حدث الحاويات بدون توقف السيرفر بالكامل
 
             docker-compose down
-            
+
             docker-compose up -d --build
             
             # 5. تنظيف الصور القديمة عشان متملاش مساحة السيرفر (مهم جداً للـ Free Tier)
